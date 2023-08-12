@@ -1,0 +1,10 @@
+﻿<RevitAddIns>
+    <AddIn Type="Application">
+        <Name>BimIshou</Name>
+        <Assembly>BimIshou/BimIshou.dll</Assembly>
+        <AddInId>CB51D564-5FC0-4170-B2F3-C487ED79A009</AddInId>
+        <FullClassName>BimIshou.Application</FullClassName>
+        <VendorId>Development</VendorId>
+        <VendorDescription></VendorDescription>
+    </AddIn>
+</RevitAddIns>
