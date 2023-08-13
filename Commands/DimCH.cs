@@ -14,22 +14,29 @@ namespace BimIshou.Commands
         }
         private void PostCommanDetailLine_OnPostableCommandModelLineEnded(object sender, EventArgs e)
         {
-            Dimension dim = Document.GetElement(PostCommanAlignedDimension.AddedElement.FirstOrDefault()) as Dimension;
-            using (Transaction tran = new Transaction(Document, "Dim CH"))
+            try
             {
-                tran.Start();
-                if (dim.Segments.Size == 0)
+                Dimension dim = Document.GetElement(PostCommanAlignedDimension.AddedElement.FirstOrDefault()) as Dimension;
+                using (Transaction tran = new Transaction(Document, "Dim CH"))
                 {
-                    dim.Prefix = "CH";
-                    tran.Commit();
+                    tran.Start();
+                    if (dim.Segments.Size == 0)
+                    {
+                        dim.Prefix = "CH";
+                        tran.Commit();
+                    }
+                    else
+                    {
+                        dim.Segments.get_Item(dim.Segments.Size - 1).Prefix = "CH";
+                        tran.Commit();
+                    }
                 }
-                else
-                {
-                    dim.Segments.get_Item(dim.Segments.Size - 1).Prefix = "CH";
-                    tran.Commit();
-                }
+                PostCommanAlignedDimension.OnPostableCommandModelLineEnded -= PostCommanDetailLine_OnPostableCommandModelLineEnded;
             }
-            PostCommanAlignedDimension.OnPostableCommandModelLineEnded -= PostCommanDetailLine_OnPostableCommandModelLineEnded;
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }
