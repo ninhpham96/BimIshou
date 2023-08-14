@@ -7,7 +7,7 @@ namespace BimIshou.Data
 {
     public class Data
     {
-        private static Data? _instance;
+        private static Data _instance;
         private Data()
         {
         }
@@ -42,7 +42,7 @@ namespace BimIshou.Data
         {
             return new FilteredElementCollector(doc).WhereElementIsNotElementType().ToElements();
         }
-        public List<RoomTagType>? GetAllTagRoom(Document doc)
+        public List<RoomTagType> GetAllTagRoom(Document doc)
         {
             try
             {

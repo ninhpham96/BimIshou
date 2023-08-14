@@ -32,6 +32,68 @@ namespace BimIshou.Utils
             if (null == r) MessageBox.Show("no intersecting geometry");
             return r;
         }
+        public static FamilyInstance GetElementIn3DView(View3D view, XYZ p, XYZ dir)
+        {
+            var filter = new ElementClassFilter(
+                typeof(FamilyInstance));
+            var refIntersector
+                = new ReferenceIntersector(filter,
+                    FindReferenceTarget.Face, view);
+            refIntersector.FindReferencesInRevitLinks = false;
+
+            var rwc = refIntersector.FindNearest(
+                p, dir);
+            var r = null == rwc
+                ? null
+                : rwc.GetReference();
+            if (null == r) MessageBox.Show("no intersecting geometry");
+            return view.Document.GetElement(r) as FamilyInstance;
+        }
+        public static List<Solid> GetSolids(this Element element)
+        {
+            List<Solid> list = new List<Solid>();
+            GeometryElement geometryElement = element.get_Geometry(new Options
+            {
+                IncludeNonVisibleObjects = true,
+                ComputeReferences = true
+            });
+            foreach (GeometryObject geometryObject in geometryElement)
+            {
+                Solid solid = geometryObject as Solid;
+                GeometryInstance geometryInstance = geometryObject as GeometryInstance;
+                if (solid != null && solid.Volume > 1E-06)
+                {
+                    list.Add(solid);
+                }
+                if (geometryInstance != null)
+                {
+                    GeometryElement instanceGeometry = geometryInstance.GetInstanceGeometry();
+                    foreach (GeometryObject geometryObject2 in instanceGeometry)
+                    {
+                        solid = (geometryObject2 as Solid);
+                        if (solid != null && solid.Volume > 1E-06)
+                        {
+                            list.Add(solid);
+                        }
+                    }
+                }
+            }
+            return list.Count > 0 ? list : null;
+        }
+        public static List<Face> GetFaces(this Element element)
+        {
+            List<Face> list = new List<Face>();
+            List<Solid> solids = element.GetSolids();
+            foreach (Solid solid in solids)
+            {
+                foreach (object obj in solid.Faces)
+                {
+                    Face item = (Face)obj;
+                    list.Add(item);
+                }
+            }
+            return list;
+        }
     }
     public class SelectionFilter : Autodesk.Revit.UI.Selection.ISelectionFilter
     {

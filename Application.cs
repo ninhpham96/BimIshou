@@ -53,7 +53,7 @@ namespace BimIshou
             DimDoubuchi.SetImage("/BimIshou;component/Resources/Icons/RibbonIcon16.png");
             DimDoubuchi.SetLargeImage("/BimIshou;component/Resources/Icons/RibbonIcon32.png");
 
-            var button1 = DimDoubuchi.AddPushButton<DimDoubuchi>("DimDoubuchi");
+            var button1 = DimDoubuchi.AddPushButton<DimDoubuchi>("DimDoubuchi 1");
             button1.SetImage("/BimIshou;component/Resources/Icons/RibbonIcon16.png");
             button1.SetLargeImage("/BimIshou;component/Resources/Icons/RibbonIcon32.png");
 
@@ -61,6 +61,9 @@ namespace BimIshou
             button2.SetImage("/BimIshou;component/Resources/Icons/RibbonIcon16.png");
             button2.SetLargeImage("/BimIshou;component/Resources/Icons/RibbonIcon32.png");
 
+            var button3 = DimDoubuchi.AddPushButton<DimDoorOrWindowInDoubuchi>("DimDoubuchi 2");
+            button3.SetImage("/BimIshou;component/Resources/Icons/RibbonIcon16.png");
+            button3.SetLargeImage("/BimIshou;component/Resources/Icons/RibbonIcon32.png");
         }
     }
 }

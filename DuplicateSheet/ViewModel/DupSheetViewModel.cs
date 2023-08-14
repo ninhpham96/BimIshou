@@ -76,7 +76,7 @@ namespace BimIshou.DuplicateSheet.ViewModel
     public partial class DupSheetViewModel
     {
         #region methods
-        private ElementId? GetSheetTitleBlock(ElementId id)
+        private ElementId GetSheetTitleBlock(ElementId id)
         {
             var all_title_block = new FilteredElementCollector(doc).
                 WhereElementIsNotElementType().
@@ -347,7 +347,7 @@ namespace BimIshou.DuplicateSheet.ViewModel
                 }
             }
         }
-        private T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        private T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
         {
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
             {
