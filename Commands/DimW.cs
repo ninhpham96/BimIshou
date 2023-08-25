@@ -1,6 +1,7 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Nice3point.Revit.Toolkit.External;
+using System.Windows;
 
 namespace BimIshou.Commands
 {
@@ -72,9 +73,9 @@ namespace BimIshou.Commands
                 }
                 PostCommanAlignedDimension.OnPostableCommandModelLineEnded -= PostCommanDetailLine_OnPostableCommandModelLineEnded;
             }
-            catch (Exception)
+            catch (Exception ee)
             {
-                throw;
+                MessageBox.Show(ee.Message);
             }            
         }
     }
