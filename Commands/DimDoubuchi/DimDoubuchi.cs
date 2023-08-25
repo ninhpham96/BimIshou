@@ -35,7 +35,7 @@ public class DimDoubuchi : ExternalCommand
             var el = UiDocument.Selection.PickObject(Autodesk.Revit.UI.Selection.ObjectType.Element,
                                             filter,
                                             "Chọn đối tượng chia tấm");
-            var tempCurve = ((Document.GetElement(el) as FamilyInstance).Location as LocationCurve).Curve;
+            var tempCurve = ((Document.GetElement(el) as FamilyInstance).Location as LocationCurve)?.Curve;
             foreach (var sel in selectedeles)
             {
                 var ele = Document.GetElement(sel) as FamilyInstance;
@@ -45,30 +45,34 @@ public class DimDoubuchi : ExternalCommand
                     dim1.Append(refe);
                 }
             }
-            foreach (var sel in selectedeles)
+            if (tempCurve != null)
             {
-                var ele = Document.GetElement(sel) as FamilyInstance;
-                var curve = (ele.Location as LocationCurve)?.Curve;
-                if (curve == null) continue;
-                if ((curve.Distance(tempCurve.GetEndPoint(0)) / setting).IsAlmostEqual(0, 0.1))
+                foreach (var sel in selectedeles)
                 {
-                    Reference refe = ele.GetReferenceByName("中心(左/右)");
-                    dim2.Append(refe);
+                    var ele = Document.GetElement(sel) as FamilyInstance;
+                    var curve = (ele.Location as LocationCurve)?.Curve;
+                    if (curve == null) continue;
+                    if ((curve.Distance(tempCurve.GetEndPoint(0)) / setting).IsAlmostEqual(0, 0.1))
+                    {
+                        Reference refe = ele.GetReferenceByName("中心(左/右)");
+                        dim2.Append(refe);
+                    }
                 }
             }
-
             Line line1 = Line.CreateBound(point.Add(ActiveView.UpDirection * 1000 / 304.8), point.Add(ActiveView.UpDirection * 1000 / 304.8).Add(ActiveView.RightDirection * 100));
             Line line2 = Line.CreateBound(point.Add(ActiveView.UpDirection * 1300 / 304.8), point.Add(ActiveView.UpDirection * 1300 / 304.8).Add(ActiveView.RightDirection * 100));
-            using (Transaction tran = new Transaction(Document, "create dim"))
+            using (Transaction tran = new Transaction(Document, "create dim1"))
             {
                 tran.Start();
                 Document.Create.NewDimension(ActiveView, line1, dim1);
-                Document.Create.NewDimension(ActiveView, line2, dim2);
+                if (dim2.Size > 1)
+                    Document.Create.NewDimension(ActiveView, line2, dim2);
                 tran.Commit();
             }
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            MessageBox.Show(e.Message);
         }
 
     }
