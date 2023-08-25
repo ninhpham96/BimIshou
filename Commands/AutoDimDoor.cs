@@ -26,8 +26,8 @@ internal class AutoDimDoor : ExternalCommand
             {
                 var familyinstance = Document.GetElement(obj) as FamilyInstance;
                 dir ??= familyinstance.FacingOrientation;
-                refss.Append(familyinstance.GetReferenceByName("左"));
-                refss.Append(familyinstance.GetReferenceByName("右"));
+                refss.Append(familyinstance.GetReferences(FamilyInstanceReferenceType.Left).First());
+                refss.Append(familyinstance.GetReferences(FamilyInstanceReferenceType.Right).First());
             }
             foreach (Reference obj in ele)
             {

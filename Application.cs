@@ -33,6 +33,10 @@ namespace BimIshou
             DimW.SetImage("/BimIshou;component/Resources/Icons/RibbonIcon16.png");
             DimW.SetLargeImage("/BimIshou;component/Resources/Icons/RibbonIcon32.png");
 
+            var DimDoorAndWindow = panel.AddPushButton<AutoDimDoor>("Dim DoorAndWindow");
+            DimDoorAndWindow.SetImage("/BimIshou;component/Resources/Icons/RibbonIcon16.png");
+            DimDoorAndWindow.SetLargeImage("/BimIshou;component/Resources/Icons/RibbonIcon32.png");
+
             var DimTT = panel.AddPushButton<DimTT>("Dim 有効");
             DimTT.SetImage("/BimIshou;component/Resources/Icons/RibbonIcon16.png");
             DimTT.SetLargeImage("/BimIshou;component/Resources/Icons/RibbonIcon32.png");
