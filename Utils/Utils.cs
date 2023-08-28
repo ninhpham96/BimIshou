@@ -125,19 +125,17 @@ namespace BimIshou.Utils
             }
             return list;
         }
-        public static List<Face> GetFacesSymbol(this Element element)
+        public static IEnumerable<Face> GetFacesSymbol(this Element element)
         {
-            List<Face> list = new List<Face>();
             List<Solid> solids = element.GetSolidsSymbol();
             foreach (Solid solid in solids)
             {
                 foreach (object obj in solid.Faces)
                 {
                     Face item = (Face)obj;
-                    list.Add(item);
+                     yield return item;
                 }
             }
-            return list;
         }
         public static string Tostring(this List<Face> objects)
         {
