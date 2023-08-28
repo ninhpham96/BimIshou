@@ -80,7 +80,7 @@ public class DimDoorOrWindowInDoubuchi : ExternalCommand
                         var ele1 = GetElementIn3DView(Get3DView(Document), new XYZ(loca.X, loca.Y, top), ActiveView.RightDirection);
                         var ele2 = GetElementIn3DView(Get3DView(Document), new XYZ(loca.X, loca.Y, top), -ActiveView.RightDirection);
 
-                        foreach (Face item in ele1.GetFaces())
+                        foreach (Face item in ele1.GetFacesInstance())
                         {
                             var locatemp = new XYZ(loca.X, loca.Y, top);
                             var temp = item?.Project(locatemp)?.XYZPoint;
@@ -91,7 +91,7 @@ public class DimDoorOrWindowInDoubuchi : ExternalCommand
                                 dim3.Append(item.Reference);
                             }
                         }
-                        foreach (Face item in ele2.GetFaces())
+                        foreach (Face item in ele2.GetFacesInstance())
                         {
                             var locatemp = new XYZ(loca.X, loca.Y, top);
                             var temp = item?.Project(locatemp)?.XYZPoint;
