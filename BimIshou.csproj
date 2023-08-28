@@ -55,6 +55,10 @@
         <StartProgram>C:\Program Files\Autodesk\Revit $(RevitVersion)\Revit.exe</StartProgram>
         <StartArguments>/language ENG</StartArguments>
     </PropertyGroup>
+    <ItemGroup>
+      <None Remove="Resources\Icons\TagSite32.png" />
+      <None Remove="Resources\Icons\TextDim32.png" />
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Nice3point.Revit.Toolkit" Version="$(RevitVersion).*" />
@@ -73,6 +77,8 @@
     <ItemGroup>
         <Resource Include="Resources\Icons\RibbonIcon16.png" />
         <Resource Include="Resources\Icons\RibbonIcon32.png" />
+        <Resource Include="Resources\Icons\TagSite32.png" />
+        <Resource Include="Resources\Icons\TextDim32.png" />
     </ItemGroup>
 
     <ItemGroup>
