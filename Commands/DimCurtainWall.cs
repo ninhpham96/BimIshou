@@ -2,7 +2,6 @@
 using Autodesk.Revit.DB;
 using BimIshou.Utils;
 using Nice3point.Revit.Toolkit.External;
-using System.Windows;
 
 namespace BimIshou.Commands;
 
@@ -35,9 +34,7 @@ public class DimCurtainWall : ExternalCommand
         using (Transaction tran = new Transaction(Document, "Dim"))
         {
             tran.Start();
-
-            Document.Create.NewDimension(ActiveView, Line.CreateBound(point, point.Add(dir * 100)), refs);
-
+            Document.Create.NewDimension(ActiveView, Line.CreateBound(point, point.Add(dir)), refs);
             tran.Commit();
         }
     }
