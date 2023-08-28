@@ -22,18 +22,23 @@ internal class AutoDimDoor : ExternalCommand
             var doororWindow = UiDocument.Selection.PickObjects(ObjectType.Element, filterDoorOrWindow);
             var p = UiDocument.Selection.PickPoint();
             XYZ dir = null;
-            foreach (Reference obj in doororWindow)
+            if (doororWindow.Count != 0)
             {
-                var familyinstance = Document.GetElement(obj) as FamilyInstance;
-                dir ??= familyinstance.FacingOrientation;
-                refss.Append(familyinstance.GetReferences(FamilyInstanceReferenceType.Left).First());
-                refss.Append(familyinstance.GetReferences(FamilyInstanceReferenceType.Right).First());
+                foreach (Reference obj in doororWindow)
+                {
+                    if (obj == null) break;
+                    var familyinstance = Document.GetElement(obj) as FamilyInstance;
+                    dir ??= familyinstance.FacingOrientation;
+                    refss.Append(familyinstance.GetReferences(FamilyInstanceReferenceType.Left).First());
+                    refss.Append(familyinstance.GetReferences(FamilyInstanceReferenceType.Right).First());
+                }
             }
             foreach (Reference obj in ele)
             {
                 var wall = Document.GetElement(obj) as Wall;
                 Line line = (wall.Location as LocationCurve).Curve as Line;
-                if (!line.Direction.IsParallel(dir)) continue;
+                if (doororWindow.Count != 0)
+                    if (!line.Direction.IsParallel(dir)) continue;
                 string unique = wall.UniqueId;
                 var refString = string.Format("{0}:{1}:{2}", unique, -9999, 4);
                 Reference core_centre = Reference.ParseFromStableRepresentation(Document, refString);
