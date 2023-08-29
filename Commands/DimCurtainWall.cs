@@ -52,7 +52,6 @@ public class DimCurtainWall : ExternalCommand
                 }
             }
         }
-
         foreach (PlanarFace item in max.GetFacesSymbol())
         {
             XYZ p = (elements.First().Location as LocationPoint).Point;
