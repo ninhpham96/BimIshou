@@ -32,6 +32,21 @@ namespace BimIshou.Utils
             if (null == r) MessageBox.Show("no intersecting geometry");
             return r;
         }
+        public static Reference GetReferenceAboveByCategory(View3D view, XYZ p, XYZ dir, ElementClassFilter filter )
+        {
+            var refIntersector
+                = new ReferenceIntersector(filter,
+                    FindReferenceTarget.Face, view);
+            refIntersector.FindReferencesInRevitLinks = false;
+
+            var rwc = refIntersector.FindNearest(
+                p, dir);
+            var r = null == rwc
+                ? null
+                : rwc.GetReference();
+            if (null == r) MessageBox.Show("no intersecting geometry");
+            return r;
+        }
         public static FamilyInstance GetElementIn3DView(View3D view, XYZ p, XYZ dir)
         {
             var filter = new ElementClassFilter(
