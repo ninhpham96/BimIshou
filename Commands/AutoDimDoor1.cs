@@ -35,21 +35,24 @@ internal class AutoDimDoor1 : ExternalCommand
                     refss.Append(right);
                 }
             }
-            foreach (Reference obj in ele)
-            {
-                var wall = Document.GetElement(obj) as Wall;
-                Line line = (wall.Location as LocationCurve).Curve as Line;
-                dir ??= wall.Orientation;
-                if (doororWindow.Count != 0)
-                    if (!line.Direction.IsParallel(dir)) continue;
-                string unique = wall.UniqueId;
-                var refString = string.Format("{0}:{1}:{2}", unique, -9999, 4);
-                Reference core_centre = Reference.ParseFromStableRepresentation(Document, refString);
-                refss.Append(core_centre);
-            }
             using (TransactionGroup tranG = new TransactionGroup(Document, "AutoDim"))
             {
                 tranG.Start();
+                foreach (Reference obj in ele)
+                {
+                    var wall = Document.GetElement(obj) as Wall;
+                    Line line = (wall.Location as LocationCurve).Curve as Line;
+                    dir ??= wall.Orientation;
+                    if (doororWindow.Count != 0)
+                        if (!line.Direction.IsParallel(dir)) continue;
+                    using (Transaction tran = new Transaction(Document, "new Line"))
+                    {
+                        tran.Start();
+                        var newLine = CreateModelLine.OnVerticalPlane(Document, Line.CreateBound(line.GetEndPoint(0), line.GetEndPoint(0).Add(line.Direction * 10)));
+                        refss.Append(newLine.GeometryCurve.Reference);
+                        tran.Commit();
+                    }
+                }
                 Dimension dim;
                 using (Transaction tran = new Transaction(Document, "new tran"))
                 {
@@ -108,7 +111,7 @@ internal class AutoDimDoor1 : ExternalCommand
                         tran.Commit();
                     }
                 }
-                tranG.Commit();
+                tranG.Assimilate();
             }
         }
         catch (Exception e)
