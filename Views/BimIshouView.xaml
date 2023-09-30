@@ -13,10 +13,8 @@
     Height="450"
     Width="800">
     <Grid>
-        <TextBlock
-            Text="BimIshou"
-            FontSize="60"
-            VerticalAlignment="Center"
-            HorizontalAlignment="Center" />
+        <Canvas x:Name="canvas">
+        </Canvas>
+        <Button Click="Button_Click" Width="100" Height="50"/>
     </Grid>
 </Window>

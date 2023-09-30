@@ -70,7 +70,6 @@ namespace BimIshou.Commands
             RevitCommandEndedMonitor revitCommandEndedMonitor = new RevitCommandEndedMonitor(uiapp);
             revitCommandEndedMonitor.CommandEnded += RevitCommandEndedMonitor_CommandEnded;
             app.DocumentChanged += Application_DocumentChanged;
-
             RevitCommandId cmdModelLine_id = RevitCommandId.LookupPostableCommandId(PostableCommand.AutomaticCeiling);
             uiapp.PostCommand(cmdModelLine_id);
         }
