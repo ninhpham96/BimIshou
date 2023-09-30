@@ -32,7 +32,7 @@ WizardStyle=modern
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "D:\BimIshou\bin\Debug R21\BimIshou.addin"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\BimIshou\bin\Debug R21\BimIshou.addin"; DestDir: "C:\Users\HC-07\AppData\Roaming\Autodesk\Revit\Addins\2021\"; Flags: ignoreversion
 Source: "D:\BimIshou\bin\Debug R21\BimIshou.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\BimIshou\bin\Debug R21\BimIshou.pdb"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\BimIshou\bin\Debug R21\CommunityToolkit.Mvvm.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -46,5 +46,20 @@ Source: "D:\BimIshou\bin\Debug R21\System.Memory.dll"; DestDir: "{app}"; Flags: 
 Source: "D:\BimIshou\bin\Debug R21\System.Numerics.Vectors.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\BimIshou\bin\Debug R21\System.Runtime.CompilerServices.Unsafe.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\BimIshou\bin\Debug R21\System.Threading.Tasks.Extensions.dll"; DestDir: "{app}"; Flags: ignoreversion
+
+Source: "D:\BimIshou\bin\Debug R21\BimIshou.addin"; DestDir: "C:\Users\HC-07\AppData\Roaming\Autodesk\Revit\Addins\2019\"; Flags: ignoreversion
+Source: "D:\BimIshou\bin\Debug R21\BimIshou.dll"; DestDir: "C:\Users\HC-07\AppData\Roaming\Autodesk\Revit\Addins\2019\BimIshou"; Flags: ignoreversion
+Source: "D:\BimIshou\bin\Debug R21\BimIshou.pdb"; DestDir: "C:\Users\HC-07\AppData\Roaming\Autodesk\Revit\Addins\2019\BimIshou"; Flags: ignoreversion
+Source: "D:\BimIshou\bin\Debug R21\CommunityToolkit.Mvvm.dll"; DestDir: "C:\Users\HC-07\AppData\Roaming\Autodesk\Revit\Addins\2019\BimIshou"; Flags: ignoreversion
+Source: "D:\BimIshou\bin\Debug R21\JetBrains.Annotations.dll"; DestDir: "C:\Users\HC-07\AppData\Roaming\Autodesk\Revit\Addins\2019\BimIshou"; Flags: ignoreversion
+Source: "D:\BimIshou\bin\Debug R21\Microsoft.Bcl.AsyncInterfaces.dll"; DestDir: "C:\Users\HC-07\AppData\Roaming\Autodesk\Revit\Addins\2019\BimIshou"; Flags: ignoreversion
+Source: "D:\BimIshou\bin\Debug R21\Nice3point.Revit.Extensions.dll"; DestDir: "C:\Users\HC-07\AppData\Roaming\Autodesk\Revit\Addins\2019\BimIshou"; Flags: ignoreversion
+Source: "D:\BimIshou\bin\Debug R21\Nice3point.Revit.Toolkit.dll"; DestDir: "C:\Users\HC-07\AppData\Roaming\Autodesk\Revit\Addins\2019\BimIshou"; Flags: ignoreversion
+Source: "D:\BimIshou\bin\Debug R21\System.Buffers.dll"; DestDir: "C:\Users\HC-07\AppData\Roaming\Autodesk\Revit\Addins\2019\BimIshou"; Flags: ignoreversion
+Source: "D:\BimIshou\bin\Debug R21\System.ComponentModel.Annotations.dll"; DestDir: "C:\Users\HC-07\AppData\Roaming\Autodesk\Revit\Addins\2019\BimIshou"; Flags: ignoreversion
+Source: "D:\BimIshou\bin\Debug R21\System.Memory.dll"; DestDir: "C:\Users\HC-07\AppData\Roaming\Autodesk\Revit\Addins\2019\BimIshou"; Flags: ignoreversion
+Source: "D:\BimIshou\bin\Debug R21\System.Numerics.Vectors.dll"; DestDir: "C:\Users\HC-07\AppData\Roaming\Autodesk\Revit\Addins\2019\BimIshou"; Flags: ignoreversion
+Source: "D:\BimIshou\bin\Debug R21\System.Runtime.CompilerServices.Unsafe.dll"; DestDir: "C:\Users\HC-07\AppData\Roaming\Autodesk\Revit\Addins\2019\BimIshou"; Flags: ignoreversion
+Source: "D:\BimIshou\bin\Debug R21\System.Threading.Tasks.Extensions.dll"; DestDir: "C:\Users\HC-07\AppData\Roaming\Autodesk\Revit\Addins\2019\BimIshou"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 

@@ -8,7 +8,7 @@ using System.Windows;
 namespace BimIshou.Commands;
 
 [Transaction(TransactionMode.Manual)]
-internal class AutoDimDoor : ExternalCommand
+internal class AutoDimDoor2 : ExternalCommand
 {
     public override void Execute()
     {
@@ -29,18 +29,21 @@ internal class AutoDimDoor : ExternalCommand
                     if (obj == null) break;
                     var familyinstance = Document.GetElement(obj) as FamilyInstance;
                     dir ??= familyinstance.FacingOrientation;
-                    refss.Append(familyinstance.GetReferences(FamilyInstanceReferenceType.Left).First());
-                    refss.Append(familyinstance.GetReferences(FamilyInstanceReferenceType.Right).First());
+                    var left = familyinstance.GetReferenceByName("左") ?? familyinstance.GetReferences(FamilyInstanceReferenceType.Left).First();
+                    var right = familyinstance.GetReferenceByName("右") ?? familyinstance.GetReferences(FamilyInstanceReferenceType.Right).First();
+                    refss.Append(left);
+                    refss.Append(right);
                 }
             }
             foreach (Reference obj in ele)
             {
                 var wall = Document.GetElement(obj) as Wall;
                 Line line = (wall.Location as LocationCurve).Curve as Line;
+                dir ??= wall.Orientation;
                 if (doororWindow.Count != 0)
                     if (!line.Direction.IsParallel(dir)) continue;
                 string unique = wall.UniqueId;
-                var refString = string.Format("{0}:{1}:{2}", unique, -9999, 4);
+                var refString = string.Format("{0}:{1}:{2}", unique, -9999, 5);
                 Reference core_centre = Reference.ParseFromStableRepresentation(Document, refString);
                 refss.Append(core_centre);
             }
@@ -51,7 +54,7 @@ internal class AutoDimDoor : ExternalCommand
                 using (Transaction tran = new Transaction(Document, "new tran"))
                 {
                     tran.Start();
-                    dim = Document.Create.NewDimension(ActiveView, Line.CreateBound(p, p.Add(XYZ.BasisX * 100)), refss);
+                    dim = Document.Create.NewDimension(ActiveView, Line.CreateBound(p, p.Add(dir)), refss);
                     tran.Commit();
                 }
                 var ids = new List<ElementId>();
@@ -100,9 +103,7 @@ internal class AutoDimDoor : ExternalCommand
                         foreach (DimensionSegment item in dim.Segments)
                         {
                             if (item.TextPosition.IsAlmostEqualTo(pos, 0.00000001))
-                            {
                                 item.Prefix = "W";
-                            }
                         }
                         tran.Commit();
                     }

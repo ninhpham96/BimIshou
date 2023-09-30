@@ -158,6 +158,35 @@ namespace BimIshou.Utils
             return s;
         }
     }
+    public static class CreateModelLine
+    {
+        public static ModelLine OnHorizontalPlane(Document doc, Line l, double elevation = 0)
+        {
+            var ori = new XYZ(0, 0, elevation);
+            var nor = XYZ.BasisZ;
+            var plane = Plane.CreateByNormalAndOrigin(nor, ori);
+            ModelLine modelLine;
+            var sk = SketchPlane.Create(doc, plane);
+            modelLine = doc.Create.NewModelCurve(l, sk) as ModelLine;
+            return modelLine;
+        }
+        public static ModelLine OnVerticalPlane(Document doc, Line l)
+        {
+            var ori = l.GetEndPoint(0);
+            var nor = l.Direction.CrossProduct(XYZ.BasisZ);
+            var plane = Plane.CreateByNormalAndOrigin(nor, ori);
+            ModelLine modelLine;
+            var sk = SketchPlane.Create(doc, plane);
+            modelLine = doc.Create.NewModelCurve(l, sk) as ModelLine;
+            return modelLine;
+        }
+        public static void ByCurve(Plane plane, Curve line, GraphicsStyle ls, Document doc)
+        {
+            var skPlane = SketchPlane.Create(doc, plane);
+            var modelCurve = doc.Create.NewModelCurve(line, skPlane);
+            if (modelCurve != null) modelCurve.LineStyle = ls;
+        }
+    }
     public class SelectionFilter : Autodesk.Revit.UI.Selection.ISelectionFilter
     {
         private BuiltInCategory _builtInCategory;
