@@ -2,15 +2,13 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Architecture;
 using Autodesk.Revit.UI;
-using Autodesk.Revit.UI.Events;
 using BimIshou.Utils;
 using Nice3point.Revit.Toolkit.External;
-using System.Windows;
 
-namespace RevitAddin
+namespace BimIshou.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class CommandMoveEnd : ExternalCommand
+    public class CreateCeilling : ExternalCommand
     {
         RevitCommandEndedMonitor revitCommandEndedMonitor;
         IList<Reference> selectRooms;
@@ -31,12 +29,10 @@ namespace RevitAddin
                 return;
             }
         }
-
         private void Application_DocumentChanged(object sender, Autodesk.Revit.DB.Events.DocumentChangedEventArgs e)
         {
             AddedElement.AddRange(e.GetAddedElementIds());
         }
-
         private void OnCommandEnded(object sender, EventArgs e)
         {
             Application.DocumentChanged -= Application_DocumentChanged;
@@ -116,36 +112,6 @@ namespace RevitAddin
                 locCurve.Curve = Line.CreateBound(transform.OfPoint(line.GetEndPoint(0)), transform.OfPoint(line.GetEndPoint(1)));
             }
             Document.Delete(detailLines.Select(x => x.Id).ToList());
-        }
-    }
-
-    public class RevitCommandEndedMonitor
-    {
-        private readonly UIApplication _revitUiApplication;
-
-        private bool _initializingCommandMonitor;
-
-        public event EventHandler CommandEnded;
-
-        public RevitCommandEndedMonitor(UIApplication revituiApplication)
-        {
-            _revitUiApplication = revituiApplication;
-            _initializingCommandMonitor = true;
-            _revitUiApplication.Idling += OnRevitUiApplicationIdling;
-        }
-        private void OnRevitUiApplicationIdling(object sender, IdlingEventArgs idlingEventArgs)
-        {
-            if (_initializingCommandMonitor)
-            {
-                _initializingCommandMonitor = false;
-                return;
-            }
-            _revitUiApplication.Idling -= OnRevitUiApplicationIdling;
-            OnCommandEnded();
-        }
-        protected virtual void OnCommandEnded()
-        {
-            CommandEnded?.Invoke(this, EventArgs.Empty);
         }
     }
 }

@@ -54,36 +54,28 @@ namespace BimIshou.Commands
 
     [UsedImplicitly]
     [Transaction(TransactionMode.Manual)]
-    public class PostCommanCreateCeiling : ExternalCommand
+    public class PostCommanCreateCeiling
     {
         //public static bool ReadyToAdd;
         public static List<ElementId> AddedElement;
-        public static UIDocument UIDoc;
+        public static UIDocument uidoc;
         public static UIApplication uiapp;
         public static Autodesk.Revit.ApplicationServices.Application app;
         public static event EventHandler OnPostableCommandModelLineEnded;
-        public override void Execute()
+        public void Execute()
         {
-            //ReadyToAdd = true;
             AddedElement = new List<ElementId>();
             OnPostableCommandModelLineEnded = null;
             RevitCommandEndedMonitor revitCommandEndedMonitor = new RevitCommandEndedMonitor(uiapp);
             revitCommandEndedMonitor.CommandEnded += RevitCommandEndedMonitor_CommandEnded;
             app.DocumentChanged += Application_DocumentChanged;
-
             RevitCommandId cmdModelLine_id = RevitCommandId.LookupPostableCommandId(PostableCommand.AutomaticCeiling);
             uiapp.PostCommand(cmdModelLine_id);
         }
-        /// <summary>
-        /// Register OnPostableCommandModelLineEnded after start
-        /// Start on any Cmd
-        /// Finist => List<DetailLine> AddedDetailLines
-        /// </summary>
-        /// <param name="uidoc">UIDocument</param>
         public static void Start(UIApplication uiap)
         {
             uiapp = uiap;
-            UIDoc = uiapp.ActiveUIDocument;
+            uidoc = uiapp.ActiveUIDocument;
             app = uiapp.Application;
             new PostCommanCreateCeiling().Execute();
         }
@@ -125,12 +117,9 @@ namespace BimIshou.Commands
                 _initializingCommandMonitor = false;
                 return;
             }
-
             _revitUiApplication.Idling -= OnRevitUiApplicationIdling;
-
             OnCommandEnded();
         }
-
         protected virtual void OnCommandEnded()
         {
             CommandEnded?.Invoke(this, EventArgs.Empty);
