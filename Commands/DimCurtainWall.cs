@@ -17,6 +17,7 @@ public class DimCurtainWall : ExternalCommand
         List<Mullion> elements = new List<Mullion>();
         List<Mullion> elements2 = new List<Mullion>();
         FamilyInstance door = null;
+        Wall host = null;
         XYZ dir = null;
         Curve line = null;
         List<BuiltInCategory> categories = new List<BuiltInCategory>() { BuiltInCategory.OST_CurtainWallMullions, BuiltInCategory.OST_Doors };
@@ -30,12 +31,22 @@ public class DimCurtainWall : ExternalCommand
             if (ele == null)
             {
                 door = Document.GetElement(select) as FamilyInstance;
+                host ??= door.Host as Wall;
                 continue;
             }
             if (ele.HandOrientation.IsParallel(XYZ.BasisZ)) continue;
             dir ??= ele.HandOrientation;
             line ??= ((ele.Host as Wall).Location as LocationCurve).Curve;
             elements.Add(ele);
+        }
+        if(door != null)
+        {
+            //var left = door.GetReferenceByName("左") ?? door.GetReferences(FamilyInstanceReferenceType.Left).First();
+            //var right = door.GetReferenceByName("右") ?? door.GetReferences(FamilyInstanceReferenceType.Right).First();
+            //refs.Append(left);
+            //refs.Append(right);
+            refs.Append(door.GetReferenceByName("ref1"));
+            refs.Append(door.GetReferenceByName("ref2"));
         }
         if (dir.IsParallel(XYZ.BasisX))
         {

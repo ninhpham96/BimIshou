@@ -48,7 +48,7 @@ internal class AutoDimDoor1 : ExternalCommand
                     using (Transaction tran = new Transaction(Document, "new Line"))
                     {
                         tran.Start();
-                        var newLine = CreateModelLine.OnVerticalPlane(Document, Line.CreateBound(line.GetEndPoint(0), line.GetEndPoint(0).Add(line.Direction * 10)));
+                        var newLine = CreateModelLine.OnVerticalPlane(Document, Line.CreateBound(line.GetEndPoint(0), line.GetEndPoint(0).Add(line.Direction * 1/304.8)));
                         refss.Append(newLine.GeometryCurve.Reference);
                         tran.Commit();
                     }

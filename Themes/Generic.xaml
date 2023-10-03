@@ -1,0 +1,16 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:BimIshou.Utils">
+
+
+    <Style TargetType="{x:Type local:FanCC}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:FanCC}">
+                    <Path Height="100" Width="100" Stretch="Uniform" Fill="Coral" Data="m 150.64867,163.39824 -3.29887,5.93963 -18.65966,-11.50208 0.30922,19.43886 h -6.64941 l 0.25735,-19.43886 -18.60819,11.55513 -3.35044,-5.93963 19.63899,-11.17664 -19.63899,-11.17664 3.35044,-5.93963 18.65966,11.50085 -0.30922,-19.38458 h 6.64941 l -0.36109,19.38458 18.71123,-11.4478 3.29887,5.93963 -19.58742,11.06931 z" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
