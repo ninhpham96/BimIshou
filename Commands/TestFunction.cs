@@ -1,8 +1,9 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
+using Autodesk.Revit.DB.Structure;
 using BimIshou.Utils;
 using Nice3point.Revit.Toolkit.External;
-using System.Windows;
+using static BimIshou.Utils.Utils;
 
 namespace BimIshou.Commands
 {
@@ -11,19 +12,16 @@ namespace BimIshou.Commands
     {
         public override void Execute()
         {
-            var line = Document.GetElement(new ElementId(57771951)) as DetailLine;
+            try
+            {
+                var temp = Document.GetElement(new ElementId(2546));
 
-            var p1 = UiDocument.Selection.PickPoint(Autodesk.Revit.UI.Selection.ObjectSnapTypes.None);
-            var p2 = UiDocument.Selection.PickPoint(Autodesk.Revit.UI.Selection.ObjectSnapTypes.None);
 
-            bool b = IsSameSide(line.GeometryCurve as Line, p1, p2);
-            MessageBox.Show(b.ToString());
-        }
-        bool IsSameSide(Line line, XYZ a, XYZ b)
-        {
-            XYZ cp1 = (line.GetEndPoint(0) - a).CrossProduct(b - a);
-            XYZ cp2 = (line.GetEndPoint(1) - a).CrossProduct(b - a);
-            return cp1.DotProduct(cp2) >= 0;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }
