@@ -1,6 +1,8 @@
 ﻿using Autodesk.Revit.UI;
 using BimIshou.AutoTag;
 using BimIshou.Commands;
+using BimIshou.Commands.A14;
+using BimIshou.Commands.ChieucaoTB;
 using BimIshou.Commands.DimDoubuchi;
 using BimIshou.DuplicateSheet;
 using Nice3point.Revit.Extensions;
@@ -72,6 +74,34 @@ namespace BimIshou
             var button3 = DimDoubuchi.AddPushButton<DimDoorOrWindowInDoubuchi>("DimDoubuchi 2");
             button3.SetImage("/BimIshou;component/Resources/Icons/RibbonIcon16.png");
             button3.SetLargeImage("/BimIshou;component/Resources/Icons/RibbonIcon32.png");
+
+            var CreateWallRegion = panel.AddSplitButton("A14", "Wall Region");
+            DimDoubuchi.SetImage("/BimIshou;component/Resources/Icons/RibbonIcon16.png");
+            DimDoubuchi.SetLargeImage("/BimIshou;component/Resources/Icons/RibbonIcon32.png");
+
+            var button4 = CreateWallRegion.AddPushButton<CheckWallTypeUsed>("Check Wall Type Used");
+            button4.SetImage("/BimIshou;component/Resources/Icons/RibbonIcon16.png");
+            button4.SetLargeImage("/BimIshou;component/Resources/Icons/RibbonIcon32.png");
+
+            var button5 = CreateWallRegion.AddPushButton<CreateViewLegend>("Create View Legend");
+            button5.SetImage("/BimIshou;component/Resources/Icons/RibbonIcon16.png");
+            button5.SetLargeImage("/BimIshou;component/Resources/Icons/RibbonIcon32.png");
+
+            var button6 = CreateWallRegion.AddPushButton<PutFillRegionToA14>("Put Fill Region ToA14");
+            button6.SetImage("/BimIshou;component/Resources/Icons/RibbonIcon16.png");
+            button6.SetLargeImage("/BimIshou;component/Resources/Icons/RibbonIcon32.png");
+
+            var button7 = CreateWallRegion.AddPushButton<CreateKeyPlaneForA14>("Create KeyPlane For A14");
+            button7.SetImage("/BimIshou;component/Resources/Icons/RibbonIcon16.png");
+            button7.SetLargeImage("/BimIshou;component/Resources/Icons/RibbonIcon32.png");
+
+            var CreateCeiling = panel.AddPushButton<CreateCeiling>("CreateCeiling");
+            CreateCeiling.SetImage("/BimIshou;component/Resources/Icons/RibbonIcon16.png");
+            CreateCeiling.SetLargeImage("/BimIshou;component/Resources/Icons/RibbonIcon32.png");
+
+            var CreateCaodoTB = panel.AddPushButton<AverageAltitudeCmd>("Cao do trung binh");
+            CreateCaodoTB.SetImage("/BimIshou;component/Resources/Icons/RibbonIcon16.png");
+            CreateCaodoTB.SetLargeImage("/BimIshou;component/Resources/Icons/RibbonIcon32.png");
         }
     }
 }

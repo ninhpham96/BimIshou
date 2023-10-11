@@ -1,10 +1,30 @@
 ﻿using Autodesk.Revit.DB;
+using System.Diagnostics;
 using System.Windows;
 
 namespace BimIshou.Utils
 {
     public static class Utils
     {
+        public static IEnumerable<double> GetIntersectOfPipeWithFloor(View3D view, XYZ p, XYZ dir)
+        {
+            var filter = new ElementClassFilter(
+                typeof(Floor));
+            var refIntersector
+                = new ReferenceIntersector(filter,
+                    FindReferenceTarget.Face, view);
+            refIntersector.FindReferencesInRevitLinks = false;
+
+            IList<ReferenceWithContext> rwcs = refIntersector.Find(
+                p, dir);
+            int count = 0;
+            foreach (ReferenceWithContext rwc in rwcs)
+            {
+                if (rwc == null) continue;
+                if (++count % 2 != 0 && rwc.Proximity >= 1450 / 304.8)
+                    yield return rwc.Proximity;
+            }
+        }
         public static View3D Get3DView(Document doc)
         {
             var collector
@@ -32,7 +52,7 @@ namespace BimIshou.Utils
             if (null == r) MessageBox.Show("no intersecting geometry");
             return r;
         }
-        public static Reference GetReferenceAboveByCategory(View3D view, XYZ p, XYZ dir, ElementClassFilter filter )
+        public static Reference GetReferenceAboveByCategory(View3D view, XYZ p, XYZ dir, ElementClassFilter filter)
         {
             var refIntersector
                 = new ReferenceIntersector(filter,
@@ -148,7 +168,7 @@ namespace BimIshou.Utils
                 foreach (object obj in solid.Faces)
                 {
                     Face item = (Face)obj;
-                     yield return item;
+                    yield return item;
                 }
             }
         }
@@ -156,6 +176,14 @@ namespace BimIshou.Utils
         {
             string s = objects.Count.ToString();
             return s;
+        }
+        public static XYZ Intersection(this ModelLine line1, ModelLine line2)
+        {
+            IntersectionResultArray iResult = new IntersectionResultArray();
+            SetComparisonResult setComparisonResult = line1.GeometryCurve.Intersect(line2.GeometryCurve, out iResult);
+            if (setComparisonResult != SetComparisonResult.Disjoint)
+                return iResult.get_Item(0).XYZPoint;
+            return null;
         }
     }
     public static class CreateModelLine

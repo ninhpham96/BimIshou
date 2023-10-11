@@ -3,6 +3,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Structure;
 using BimIshou.Utils;
 using Nice3point.Revit.Toolkit.External;
+using System.Diagnostics;
 using static BimIshou.Utils.Utils;
 
 namespace BimIshou.Commands
@@ -12,15 +13,10 @@ namespace BimIshou.Commands
     {
         public override void Execute()
         {
-            try
+            var xxx = GetIntersectOfPipeWithFloor(Get3DView(Document), new XYZ(90.717410681, 123.157338301, 100), -XYZ.BasisZ);
+            foreach (var x in xxx)
             {
-                var temp = Document.GetElement(new ElementId(2546));
-
-
-            }
-            catch (Exception)
-            {
-                throw;
+                Debug.WriteLine(x);
             }
         }
     }
