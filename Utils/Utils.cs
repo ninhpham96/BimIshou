@@ -1,11 +1,116 @@
 ﻿using Autodesk.Revit.DB;
-using System.Diagnostics;
+using Autodesk.Revit.DB.Electrical;
 using System.Windows;
 
 namespace BimIshou.Utils
 {
     public static class Utils
     {
+        public static List<Element> GetElementConnectedContinuous(this Element e)
+        {
+            Dictionary<string, Element> OutElements = new Dictionary<string, Element>();
+            List<Element> collector = Collector(e, OutElements);
+            return collector;
+        }
+        private static List<Element> Collector(Element e, Dictionary<string, Element> OutElements)
+        {
+            double count = 0;
+            List<Element> elements = e.GetElementConnectedWith();
+            foreach (Element item in elements)
+            {
+                if (OutElements.ContainsKey(item.Id.ToString()))
+                {
+                    count += 1;
+                }
+                else
+                {
+                    OutElements[item.Id.ToString()] = item;
+                    Collector(item, OutElements);
+                }
+            }
+            if (Math.Abs(count - elements.Count) < 0.0001)
+            {
+                return new List<Element>(OutElements.Values);
+            }
+            return new List<Element>(OutElements.Values);
+        }
+        public static ConnectorManager GetConnectorManager(Element element)
+        {
+            if (element is FamilyInstance familyInstance)
+            {
+                return familyInstance.MEPModel.ConnectorManager;
+            }
+            if (element is Wire wire)
+            {
+                return wire.ConnectorManager;
+            }
+            if (element is MEPCurve mepCurve)
+            {
+                return mepCurve.ConnectorManager;
+            }
+            if (element is FabricationPart fabricationPart)
+            {
+                return fabricationPart.ConnectorManager;
+            }
+
+            return null;
+        }
+        public static List<Connector> GetConnectors(
+        ConnectorManager connectorManager)
+        {
+            List<Connector> connectors = new List<Connector>();
+            foreach (Connector c in connectorManager.Connectors)
+            {
+                if (c == null) continue;
+                connectors.Add(c);
+            }
+            return connectors;
+        }
+        public static List<Connector> GetConnectors(this Element element)
+        {
+            if (element == null) throw new ArgumentException(nameof(element));
+            ConnectorManager connectorManager =
+                GetConnectorManager(element);
+            if (connectorManager == null) return new List<Connector>();
+            return GetConnectors(connectorManager);
+        }
+        public static List<Element> GetElementConnectedWith(this Element e)
+        {
+            List<Element> elements = new List<Element>();
+            List<Connector> connectors = e.GetConnectors();
+            if (connectors == null) return elements;
+            if (connectors.Count == 0) return elements;
+            elements = GetElementConnectedWith(connectors);
+            return elements;
+        }
+        public static List<Element> GetElementConnectedWith(this List<Connector> connectors)
+        {
+            List<Element> elements = new List<Element>();
+            foreach (Connector connector in connectors)
+            {
+                if (connector.IsConnected)
+                {
+                    List<Element> nextElement = connector.GetElementsConnected();
+                    nextElement.ForEach(delegate (Element ele) { elements.Add(ele); });
+                }
+            }
+            return elements;
+        }
+        public static List<Element> GetElementsConnected(this Connector conn)
+        {
+            List<Element> elements = new List<Element>();
+            ConnectorSetIterator connectorSetIterator = conn.AllRefs.ForwardIterator();
+            while (connectorSetIterator.MoveNext())
+            {
+                Connector connref = connectorSetIterator.Current as Connector;
+                Element elem = connref.Owner;
+                if (elem != null)
+                {
+                    elements.Add(elem);
+                }
+            }
+            return elements;
+        }
         public static IEnumerable<double> GetIntersectOfPipeWithFloor(View3D view, XYZ p, XYZ dir)
         {
             var filter = new ElementClassFilter(
@@ -184,6 +289,46 @@ namespace BimIshou.Utils
             if (setComparisonResult != SetComparisonResult.Disjoint)
                 return iResult.get_Item(0).XYZPoint;
             return null;
+        }
+        public static XYZ Intersection(this Line c1, Line c2)
+        {
+            XYZ p1 = c1.GetEndPoint(0);
+            XYZ q1 = c1.GetEndPoint(1);
+            XYZ p2 = c2.GetEndPoint(0);
+            XYZ q2 = c2.GetEndPoint(1);
+            XYZ v1 = q1 - p1;
+            XYZ v2 = q2 - p2;
+            XYZ w = p2 - p1;
+            XYZ p5 = null;
+            double c = (v2.X * w.Y - v2.Y * w.X)
+                       / (v2.X * v1.Y - v2.Y * v1.X);
+            if (!double.IsInfinity(c))
+            {
+                double x = p1.X + c * v1.X;
+                double y = p1.Y + c * v1.Y;
+                p5 = new XYZ(x, y, 0);
+            }
+            return p5;
+        }
+        public static XYZ Intersection(this Curve c1, Curve c2)
+        {
+            XYZ p1 = c1.GetEndPoint(0);
+            XYZ q1 = c1.GetEndPoint(1);
+            XYZ p2 = c2.GetEndPoint(0);
+            XYZ q2 = c2.GetEndPoint(1);
+            XYZ v1 = q1 - p1;
+            XYZ v2 = q2 - p2;
+            XYZ w = p2 - p1;
+            XYZ p5 = null;
+            double c = (v2.X * w.Y - v2.Y * w.X)
+                       / (v2.X * v1.Y - v2.Y * v1.X);
+            if (!double.IsInfinity(c))
+            {
+                double x = p1.X + c * v1.X;
+                double y = p1.Y + c * v1.Y;
+                p5 = new XYZ(x, y, 0);
+            }
+            return p5;
         }
     }
     public static class CreateModelLine
@@ -364,7 +509,6 @@ namespace BimIshou.Utils
             }
             return value;
         }
-
         public static double DistancePoint2Line(this XYZ p, Line line)
         {
             XYZ endPoint = null;
@@ -380,7 +524,6 @@ namespace BimIshou.Utils
             double d = Math.Abs((p - endPoint).DotProduct(direction));
             return Math.Sqrt(p.DistanceTo(endPoint) * p.DistanceTo(endPoint) - d * d);
         }
-
         public static XYZ ProjectPoint2Line(this XYZ p, Line line)
         {
             XYZ endPoint = line.GetEndPoint(0);
@@ -388,7 +531,6 @@ namespace BimIshou.Utils
             XYZ direction = line.Direction.Normalize();
             return endPoint.Add(vector1.DotProduct(direction) * direction);
         }
-
         public static bool IsLeftSide(this XYZ point, Curve curve)
         {
             bool isLeft = false;
@@ -412,28 +554,23 @@ namespace BimIshou.Utils
 
             return isLeft;
         }
-
         public static double VectorLength(XYZ vector)
         {
             return Math.Sqrt(Math.Pow(vector.X, 2.0) + Math.Pow(vector.Y, 2.0) + Math.Pow(vector.Z, 2.0));
         }
-
         public static bool IsEqual(this XYZ point1, XYZ point2)
         {
             double length = (point2 - point1).GetLength();
             return length < 1e-9;
         }
-
         public static bool IsNegative(this XYZ p, XYZ q)
         {
             return p.IsParallel(q) && p.DotProduct(q) < 0;
         }
-
         public static bool IsSameDirection(this XYZ p, XYZ q)
         {
             return p.IsParallel(q) && p.DotProduct(q) > 0;
         }
-
         public static XYZ FindXyzFromLengthVector(XYZ start, XYZ end, double leng)
         {
             XYZ value = null;
@@ -441,22 +578,18 @@ namespace BimIshou.Utils
             value = start.Add(leng * vector);
             return value;
         }
-
         public static XYZ EditY(this XYZ p, double y)
         {
             return new XYZ(p.X, y, p.Z);
         }
-
         public static XYZ EditX(this XYZ p, double x)
         {
             return new XYZ(x, p.Y, p.Z);
         }
-
         public static bool IsPerpendicular(this XYZ v, XYZ w)
         {
             return 1E-09 < v.GetLength() && 1E-09 < w.GetLength() && 1E-09 > Math.Abs(v.DotProduct(w));
         }
-
         public static bool IsParallel(this XYZ p, XYZ q)
         {
             return p.CrossProduct(q).GetLength() < 0.01;

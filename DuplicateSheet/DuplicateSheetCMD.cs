@@ -11,8 +11,22 @@ namespace BimIshou.DuplicateSheet
     {
         public override void Execute()
         {
-            DupSheetViewModel dupSheetViewModel = new DupSheetViewModel(UiApplication);
-            dupSheetViewModel.DupSheetView.ShowDialog();
+
+            using (TransactionGroup tranG = new TransactionGroup(Document))
+            {
+                tranG.Start();
+                try
+                {
+                    DupSheetViewModel dupSheetViewModel = new DupSheetViewModel(UiApplication);
+                    dupSheetViewModel.DupSheetView.ShowDialog();
+                    tranG.Assimilate();
+                }
+                catch (Exception)
+                {
+                    tranG.RollBack();
+                }
+            }
+
         }
     }
 }

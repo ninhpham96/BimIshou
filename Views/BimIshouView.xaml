@@ -15,6 +15,6 @@
     <Grid>
         <Canvas x:Name="canvas">
         </Canvas>
-        <Button Click="Button_Click" Width="100" Height="50"/>
+        <Button Click="Button_Click" Content="testtttttttttttttttt" Width="100" Height="50"/>
     </Grid>
 </Window>

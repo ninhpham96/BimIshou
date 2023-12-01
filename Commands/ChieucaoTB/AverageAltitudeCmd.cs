@@ -1,8 +1,6 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
-using BimIshou.Utils;
 using Nice3point.Revit.Toolkit.External;
-using System.Diagnostics;
 
 namespace BimIshou.Commands.ChieucaoTB;
 

@@ -1,151 +1,103 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
-using Autodesk.Revit.DB.Architecture;
+using Autodesk.Revit.DB.ExtensibleStorage;
+using Autodesk.Revit.DB.Mechanical;
+using Autodesk.Revit.UI.Selection;
 using Autodesk.Revit.UI;
-using Autodesk.Revit.UI.Events;
-using BimIshou.Utils;
 using Nice3point.Revit.Toolkit.External;
-using System.Windows;
+using Autodesk.Revit.ApplicationServices;
+using System.Diagnostics;
 
 namespace RevitAddin
 {
     [Transaction(TransactionMode.Manual)]
-    public class CommandMoveEnd : ExternalCommand
+    public class TestCreateSchema : ExternalCommand
     {
-        RevitCommandEndedMonitor revitCommandEndedMonitor;
-        IList<Reference> selectRooms;
-        public List<ElementId> AddedElement { get; set; } = new List<ElementId>();
-        List<ElementId> Ceillings = new();
         public override void Execute()
         {
+        }    }
+
+    [Transaction(TransactionMode.Manual)]
+    public class SplitDuctV1Cmd : IExternalCommand
+    {
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+        {
+            UIApplication uiapp = commandData.Application;
+            UIDocument uidoc = uiapp.ActiveUIDocument;
+            Application app = uiapp.Application;
+            Document doc = uidoc.Document;
             try
             {
-                selectRooms = UiDocument.Selection.PickObjects(Autodesk.Revit.UI.Selection.ObjectType.Element, new SelectionFilter(BuiltInCategory.OST_Rooms, true));
-                revitCommandEndedMonitor = new RevitCommandEndedMonitor(UiApplication);
-                revitCommandEndedMonitor.CommandEnded += OnCommandEnded;
-                Application.DocumentChanged += Application_DocumentChanged;
-                UiApplication.PostCommand(RevitCommandId.LookupPostableCommandId(PostableCommand.AutomaticCeiling));
-            }
-            catch (Autodesk.Revit.Exceptions.OperationCanceledException)
-            {
-                return;
-            }
-        }
-
-        private void Application_DocumentChanged(object sender, Autodesk.Revit.DB.Events.DocumentChangedEventArgs e)
-        {
-            AddedElement.AddRange(e.GetAddedElementIds());
-        }
-
-        private void OnCommandEnded(object sender, EventArgs e)
-        {
-            Application.DocumentChanged -= Application_DocumentChanged;
-            revitCommandEndedMonitor.CommandEnded -= OnCommandEnded;
-            foreach (var item in AddedElement)
-            {
-                var ele = Document.GetElement(item);
-                if (ele is Ceiling)
+                List<Element> element = new List<Element>();
+                List<Connector> connectors = new List<Connector>();
+                List<Reference> references = uidoc.Selection.PickObjects(ObjectType.Element).ToList();
+                foreach (Reference elementrReference in references)
                 {
-                    Ceillings.Add(ele.Id);
-                    break;
+                    Element elementDuct = doc.GetElement(elementrReference);
+                    element.Add(elementDuct);
                 }
-            }
-            using (TransactionGroup tranG = new TransactionGroup(Document, "Auto Create Ceilling"))
-            {
-                tranG.Start();
-                using (Transaction transs = new Transaction(Document, "test"))
+                double Lengthft = 1110 / 304.8;
+                Duct duct1 = null;
+                Duct duct2 = null;
+                Duct ductmain = null;
+                foreach (Element ductElement in element)
                 {
-                    transs.Start();
-                    var opt = new SpatialElementBoundaryOptions();
-                    for (int i = 1; i < selectRooms.Count; i++)
+                    ductmain = ductElement as Duct;
+                    Curve curve = ((LocationCurve)ductmain.Location).Curve;
+                    using (Transaction t = new Transaction(doc, "Chia Duct test"))
                     {
-                        var tempCeilling = (Document.GetElement(Ceillings.FirstOrDefault())).Copy(XYZ.BasisY * 100 * i).FirstOrDefault();
-                        Ceillings.Add(tempCeilling);
-                    }
-                    transs.Commit();
-                }
-                for (int i = 0; i < selectRooms.Count; i++)
-                {
-                    ICollection<ElementId> ids;
-                    List<Line> polygon = new List<Line>();
-                    Room room = Document.GetElement(selectRooms[i]) as Room;
-                    IList<IList<BoundarySegment>> loops = room.GetBoundarySegments(new SpatialElementBoundaryOptions());
-                    foreach (IList<BoundarySegment> loop in loops)
-                    {
-                        foreach (BoundarySegment seg in loop)
+                        t.Start();
+                        while (curve.Length > Lengthft)
                         {
-                            Line line = seg.GetCurve() as Line;
-                            polygon.Add(line);
+                            XYZ startPoint = curve.GetEndPoint(0);
+                            XYZ endPoint = curve.GetEndPoint(1);
+                            XYZ direction = endPoint.Subtract(startPoint).Normalize();
+                            XYZ breakPoint = startPoint.Add(direction.Multiply(Lengthft));
+
+                            ElementId newductId = MechanicalUtils.BreakCurve(doc, ductmain.Id, breakPoint);
+                            duct1 = ductElement as Duct;
+                            duct2 = doc.GetElement(newductId) as Duct;
+                            curve = ((LocationCurve)ductElement.Location).Curve;
+                            if (curve.Length < Lengthft)
+                            {
+                                break;
+                            }
+                            doc.Regenerate();
+
+                            var unusedConnectors1 = duct1.ConnectorManager.UnusedConnectors;
+                            var unusedConnectors2 = duct2.ConnectorManager.UnusedConnectors;
+                            foreach (var connector in unusedConnectors1)
+                            {
+                                if (connector is Connector con)
+                                {
+                                    connectors.Add(con);
+                                    Debug.WriteLine(con.Origin);
+                                }
+                            }
+                            foreach (Connector connector in unusedConnectors2)
+                            {
+                                if (connector is Connector con)
+                                {
+                                    connectors.Add(con);
+                                    Debug.WriteLine(con.Origin);
+                                }
+                            }
+                            break;
+                            FamilyInstance familyInstance = doc.Create.NewUnionFitting(connectors[1], connectors[2]);
+
                         }
+                        t.Commit();
                     }
-                    using (Transaction transs = new Transaction(Document, "temp"))
-                    {
-                        transs.Start();
-                        ids = Document.Delete(Ceillings[i]);
-                        transs.RollBack();
-                    }
-                    using (Transaction trans = new Transaction(Document, "Change Sketch Ceilling"))
-                    {
-                        trans.Start();
-                        EditCeilling(ids, polygon);
-                        trans.Commit();
-                    }
+
                 }
-                tranG.Assimilate();
+                return Result.Succeeded;
             }
-        }
-        private void EditCeilling(ICollection<ElementId> elementIds, List<Line> polygon)
-        {
-            List<ModelLine> detailLines = new List<ModelLine>();
-            foreach (ElementId id in elementIds)
+            catch (Exception ex)
             {
-                Element ele = Document.GetElement(id);
-                if (ele is ModelLine)
-                {
-                    detailLines.Add(ele as ModelLine);
-                }
+                ex.Message.ToString();
+                throw;
             }
-            var firstDetailLine = detailLines.FirstOrDefault();
-            foreach (var line in polygon)
-            {
-                Transform transform = Transform.CreateTranslation(new XYZ(0, 0, 1));
-                var tf = Transform.Identity;
-                var newID = ElementTransformUtils.CopyElement(Document, firstDetailLine.Id, XYZ.BasisY);
-                var newLine = Document.GetElement(newID.First()) as ModelLine;
-                var locCurve = newLine.Location as LocationCurve;
-                locCurve.Curve = Line.CreateBound(transform.OfPoint(line.GetEndPoint(0)), transform.OfPoint(line.GetEndPoint(1)));
-            }
-            Document.Delete(detailLines.Select(x => x.Id).ToList());
-        }
-    }
 
-    public class RevitCommandEndedMonitor
-    {
-        private readonly UIApplication _revitUiApplication;
-
-        private bool _initializingCommandMonitor;
-
-        public event EventHandler CommandEnded;
-
-        public RevitCommandEndedMonitor(UIApplication revituiApplication)
-        {
-            _revitUiApplication = revituiApplication;
-            _initializingCommandMonitor = true;
-            _revitUiApplication.Idling += OnRevitUiApplicationIdling;
-        }
-        private void OnRevitUiApplicationIdling(object sender, IdlingEventArgs idlingEventArgs)
-        {
-            if (_initializingCommandMonitor)
-            {
-                _initializingCommandMonitor = false;
-                return;
-            }
-            _revitUiApplication.Idling -= OnRevitUiApplicationIdling;
-            OnCommandEnded();
-        }
-        protected virtual void OnCommandEnded()
-        {
-            CommandEnded?.Invoke(this, EventArgs.Empty);
         }
     }
 }

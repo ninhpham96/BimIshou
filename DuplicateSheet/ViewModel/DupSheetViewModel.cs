@@ -125,33 +125,10 @@ namespace BimIshou.DuplicateSheet.ViewModel
         {
             string current_sheetnumber = sourceview.SheetNumber;
             int index = current_sheetnumber.LastIndexOf("-");
-            string fisrtsubname = current_sheetnumber.Substring(0,index);
+            string fisrtsubname = current_sheetnumber.Substring(0, index);
             string lastsubname = current_sheetnumber.Substring(index + 1);
-            int sheetnumber = Int32.Parse(lastsubname)+i;
-            string newsheetnumber = fisrtsubname+"-"+sheetnumber;
-
-            //for (int j = 0; j < current_sheetnumber.Length; j++)
-            //{
-            //    if ((int)current_sheetnumber[j] >= 48 && (int)current_sheetnumber[j] <= 57)
-            //    {
-            //        sheetnumber = current_sheetnumber.Substring(0, j);
-            //        number = int.Parse(current_sheetnumber.Substring(j));
-            //        break;
-            //    }
-            //}
-            //if (sheetnumber == string.Empty)
-            //{
-            //    new_sheetnumber = sheetnumber + "02";
-            //    sourceview.Name = sheetnumber + "01";
-            //}
-            //else
-            //{
-            //    int new_number = number + i;
-            //    if (new_number < 10)
-            //        new_sheetnumber = sheetnumber + 0 + new_number;
-            //    else
-            //        new_sheetnumber = sheetnumber + new_number;
-            //}
+            int sheetnumber = int.Parse(lastsubname) + i;
+            string newsheetnumber = fisrtsubname + "-" + sheetnumber;
             targetview.SheetNumber = newsheetnumber;
         }
         void DuplicateSelectedSheet(ViewSheet vs, int i)
@@ -163,10 +140,10 @@ namespace BimIshou.DuplicateSheet.ViewModel
                 {
                     tran.Start();
                     var new_sheet = ViewSheet.Create(doc, title_block);
-                    var para = vs.LookupParameter("シート 発行目的").AsValueString();
-                    new_sheet.LookupParameter("シート 発行目的").Set(para);
+                    //var para = vs.LookupParameter("シート 発行目的").AsValueString();
+                    //new_sheet.LookupParameter("シート 発行目的").Set(para);
                     UpdateSheetName(vs, new_sheet, i);
-                    UpdateSheetNumer(vs, new_sheet, i);
+                    //UpdateSheetNumer(vs, new_sheet, i);
                     if (DupSheetView.ckbSchedules.IsChecked == true)
                         DuplicateSchedules(vs.Id, new_sheet.Id);
                     if (DupSheetView.ckbView.IsChecked == true)
