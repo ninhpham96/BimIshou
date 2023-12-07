@@ -2,6 +2,7 @@
 using Autodesk.Revit.DB;
 using BimIshou.DuplicateSheet.ViewModel;
 using Nice3point.Revit.Toolkit.External;
+using System.Windows;
 
 namespace BimIshou.DuplicateSheet
 {
@@ -21,9 +22,10 @@ namespace BimIshou.DuplicateSheet
                     dupSheetViewModel.DupSheetView.ShowDialog();
                     tranG.Assimilate();
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     tranG.RollBack();
+                    MessageBox.Show(e.Message);
                 }
             }
 

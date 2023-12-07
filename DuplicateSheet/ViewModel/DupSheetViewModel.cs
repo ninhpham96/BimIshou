@@ -134,7 +134,11 @@ namespace BimIshou.DuplicateSheet.ViewModel
         void DuplicateSelectedSheet(ViewSheet vs, int i)
         {
             var title_block = GetSheetTitleBlock(vs.Id);
-            if (title_block != null)
+            if (title_block == null)
+            {
+                throw new Exception("Khong tim thay TitleBlock");
+            }
+            else
             {
                 using (Transaction tran = new Transaction(doc, "create sheet"))
                 {

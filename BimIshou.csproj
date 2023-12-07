@@ -75,11 +75,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Resource Include="Resources\Icons\RibbonIcon16.png" />
-        <Resource Include="Resources\Icons\RibbonIcon32.png" />
-    </ItemGroup>
-
-    <ItemGroup>
         <Folder Include="ViewModels\Objects" />
     </ItemGroup>
 
