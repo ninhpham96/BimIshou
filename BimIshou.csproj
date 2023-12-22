@@ -60,12 +60,14 @@
         <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.2.1" />
         <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
         <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+        <PackageReference Include="ModernWpfUI" Version="0.9.6" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="Nice3point.Revit.Toolkit" Version="$(RevitVersion).*" />
         <PackageReference Include="Nice3point.Revit.Extensions" Version="$(RevitVersion).*" />
         <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="$(RevitVersion).*-*" />
         <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="$(RevitVersion).*-*" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
+        <PackageReference Include="NPOI" Version="2.6.2" />
     </ItemGroup>
 
     <ItemGroup>
@@ -79,6 +81,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Reference Include="AdWindows">
+        <HintPath>C:\Program Files\Autodesk\Revit 2021\AdWindows.dll</HintPath>
+      </Reference>
       <Reference Include="System.Windows.Forms" />
     </ItemGroup>
 

@@ -5,14 +5,12 @@ using BimIshou.Commands.A14;
 using BimIshou.Commands.ChieucaoTB;
 using BimIshou.Commands.DimDoubuchi;
 using BimIshou.DuplicateSheet;
-using Nice3point.Revit.Extensions;
-using Nice3point.Revit.Toolkit.External;
-using System.Reflection;
+using BimIshou.TestAtt;
 
 namespace BimIshou
 {
     [UsedImplicitly]
-    public class Application : ExternalApplication
+    public class Application : ApplicationBase
     {
         public override void OnStartup()
         {

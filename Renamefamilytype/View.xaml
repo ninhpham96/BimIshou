@@ -10,16 +10,20 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <ListView x:Name="MyListView" ItemsSource="{Binding ListCategory}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Expander Header="{Binding Name}" IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
-                        <ListView ItemsSource="{Binding MyListView.ItemsSource}">
+        <TreeView x:Name="MyListView" ItemsSource="{Binding ListCategory}">
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate>
+                    <TextBlock Text="{Binding Header}" />
+                    <HierarchicalDataTemplate.ItemTemplate>
+                        <DataTemplate>
+                            <ListView ItemsSource="{Binding Children}">
+                                
 
-                        </ListView>
-                    </Expander>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                            </ListView>
+                        </DataTemplate>
+                    </HierarchicalDataTemplate.ItemTemplate>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
     </Grid>
 </Window>
