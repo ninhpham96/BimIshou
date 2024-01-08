@@ -58,16 +58,12 @@
 
     <ItemGroup>
         <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.2.1" />
+        <PackageReference Include="HcBimUtils" Version="2021.0.8" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
         <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
         <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
         <PackageReference Include="ModernWpfUI" Version="0.9.6" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-        <PackageReference Include="Nice3point.Revit.Toolkit" Version="2024.0.1" />
-        <PackageReference Include="Nice3point.Revit.Extensions" Version="$(RevitVersion).*" />
-        <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="$(RevitVersion).*-*" />
-        <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="$(RevitVersion).*-*" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
-        <PackageReference Include="NPOI" Version="2.6.2" />
     </ItemGroup>
 
     <ItemGroup>
@@ -83,8 +79,11 @@
     <ItemGroup>
       <Reference Include="AdWindows">
         <HintPath>C:\Program Files\Autodesk\Revit 2021\AdWindows.dll</HintPath>
+        <Private>False</Private>
       </Reference>
-      <Reference Include="System.Windows.Forms" />
+      <Reference Include="System.Windows.Forms">
+        <Private>False</Private>
+      </Reference>
     </ItemGroup>
 
     <ItemGroup>
@@ -113,6 +112,114 @@
 
         <!--<Copy SourceFiles="@(AddinFiles)" DestinationFolder="$(AppData)\Autodesk\Revit\Addins\$(RevitVersion)\%(RecursiveDir)" />-->
     </Target>
+
+    <ItemGroup>
+      <Reference Update="PresentationCore">
+        <Private>False</Private>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Update="PresentationFramework">
+        <Private>False</Private>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Update="System">
+        <Private>False</Private>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Update="System.Core">
+        <Private>False</Private>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Update="System.Data">
+        <Private>False</Private>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Update="System.Drawing">
+        <Private>False</Private>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Update="System.IO.Compression.FileSystem">
+        <Private>False</Private>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Update="System.Numerics">
+        <Private>False</Private>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Update="System.Runtime.Serialization">
+        <Private>False</Private>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Update="System.Windows.Controls.Ribbon">
+        <Private>False</Private>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Update="System.Xaml">
+        <Private>False</Private>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Update="System.Xml">
+        <Private>False</Private>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Update="System.Xml.Linq">
+        <Private>False</Private>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Update="UIAutomationClient">
+        <Private>False</Private>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Update="UIAutomationClientSideProviders">
+        <Private>False</Private>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Update="UIAutomationProvider">
+        <Private>False</Private>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Update="UIAutomationTypes">
+        <Private>False</Private>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Update="WindowsBase">
+        <Private>False</Private>
+      </Reference>
+    </ItemGroup>
 
     <!--<Target Name="DeleteFiles" AfterTargets="Clean">
         <RemoveDir Directories="$(AppData)\Autodesk\Revit\Addins\$(RevitVersion)\$(ProjectName)" />

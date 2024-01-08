@@ -2,7 +2,7 @@
 using BimIshou.Commands.DimDoubuchi.View;
 using Nice3point.Revit.Toolkit.External;
 
-namespace BimIshou.Commands.DimDoubuchi
+namespace BimIshou
 {
     [Transaction(TransactionMode.Manual)]
     internal class SettingDim : ExternalCommand

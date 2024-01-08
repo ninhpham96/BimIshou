@@ -1,33 +1,32 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
-using Microsoft.Office.Interop.Excel;
 using Nice3point.Revit.Toolkit.External;
-using Autodesk.Windows.ToolBars;
-using Autodesk.Windows;
+using Autodesk.Revit.UI;
 using System.Diagnostics;
-using System.Windows;
+using KAutoHelper;
+using System.Windows.Forms;
 
 namespace BimIshou.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class test : ExternalCommand
+    public class test : ExternalCommand, IExternalCommandAvailability
     {
         public override void Execute()
         {
-            ComponentManager.Ribbon.MouseDoubleClick += Ribbon_MouseDoubleClick; ;
-
-            using (Transaction tran = new Transaction(Document, "new tran"))
-            {
-                tran.Start();
-
-                tran.Commit();
-            }
-
         }
 
-        private void Ribbon_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        public bool IsCommandAvailable(UIApplication applicationData, CategorySet selectedCategories)
         {
-            MessageBox.Show("1");
+            // Allow button click if there is no active selection
+            if (selectedCategories.IsEmpty)
+                return true;
+            // Allow button click if there is at least one wall selected
+            foreach (Category c in selectedCategories)
+            {
+                if (c.Id.IntegerValue == (int)BuiltInCategory.OST_Walls)
+                    return true;
+            }
+            return false;
         }
     }
 }

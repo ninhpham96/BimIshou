@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using BimIshou;
 
 namespace BimIshou.Commands.DimDoubuchi.View
 {
@@ -14,7 +15,7 @@ namespace BimIshou.Commands.DimDoubuchi.View
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            DimDoubuchi.setting = int.Parse(settingDim.Text);
+            BimIshou.DimDoubuchi.setting = int.Parse(settingDim.Text);
             this.Close();
         }
     }

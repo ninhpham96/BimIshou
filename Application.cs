@@ -1,11 +1,8 @@
-﻿using Autodesk.Revit.UI;
-using BimIshou.AutoTag;
-using BimIshou.Commands;
-using BimIshou.Commands.A14;
+﻿using BimIshou.Commands;
 using BimIshou.Commands.ChieucaoTB;
-using BimIshou.Commands.DimDoubuchi;
-using BimIshou.DuplicateSheet;
 using BimIshou.TestAtt;
+using BimIshou.DuplicateSheet;
+using BimIshou.Commands.A14;
 
 namespace BimIshou
 {
@@ -16,10 +13,9 @@ namespace BimIshou
         {
             CreateRibbon();
         }
-
         private void CreateRibbon()
         {
-            var panel = Application.CreatePanel("Dimmension", "BimIshou");
+            var panel = Application.CreatePanel("Export to Excel", "Tools");
 
             var dimCh = panel.AddPushButton<DimCH>("Dim CH");
             dimCh.SetImage("/BimIshou;component/Resources/Icons/RibbonIcon16.png");
@@ -100,6 +96,10 @@ namespace BimIshou
             var CreateCaodoTB = panel.AddPushButton<AverageAltitudeCmd>("Cao do trung binh");
             CreateCaodoTB.SetImage("/BimIshou;component/Resources/Icons/RibbonIcon16.png");
             CreateCaodoTB.SetLargeImage("/BimIshou;component/Resources/Icons/RibbonIcon32.png");
+
+            var export2Excel = panel.AddPushButton<Export2Excel>("Export to Excel");
+            export2Excel.SetImage("/BimIshou;component/Resources/Icons/RibbonIcon16.png");
+            export2Excel.SetLargeImage("/BimIshou;component/Resources/Icons/RibbonIcon32.png");
         }
     }
 }

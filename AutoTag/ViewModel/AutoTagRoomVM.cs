@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using BimIshou.AutoTag.View;
 
-namespace BimIshou.AutoTag
+namespace BimIshou
 {
     public partial class AutoTagRoomVM : ObservableObject
     {

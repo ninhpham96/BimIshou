@@ -4,7 +4,7 @@ using Autodesk.Revit.DB;
 using Nice3point.Revit.Toolkit.External;
 using System.Windows;
 
-namespace BimIshou.Commands.DimDoubuchi;
+namespace BimIshou;
 
 [Transaction(TransactionMode.Manual)]
 public class DimDoubuchi : ExternalCommand

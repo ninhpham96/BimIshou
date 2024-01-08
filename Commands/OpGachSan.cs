@@ -21,10 +21,10 @@ namespace BimIshou.Commands
         public override void Execute()
         {
             double delta = (300 + 2) / 304.8;
-            Room room = Document.GetElement(new ElementId(3096)) as Room;
+            Room room = Document.GetElement(new ElementId(2805)) as Room;
             var option = new SpatialElementBoundaryOptions();
             var bound = room.GetBoundarySegments(option);
-            FamilyInstance viendinhvi = Document.GetElement(new ElementId(8828)) as FamilyInstance;
+            FamilyInstance viendinhvi = Document.GetElement(new ElementId(3703)) as FamilyInstance;
             XYZ loca = (viendinhvi.Location as LocationPoint).Point;
 
             foreach (var Segments in bound)
@@ -64,197 +64,76 @@ namespace BimIshou.Commands
             foreach (var element in elements)
             {
                 XYZ newloca = (element.Location as LocationPoint).Point;
-                if (!room.IsPointInRoom(newloca) && !CheckDistance(lines, newloca))
+                if (!room.IsPointInRoom(newloca) && !CheckCollision(lines, element.GetSolidsInstance().FirstOrDefault()))
                 {
                     Document.Delete(element.Id);
+                    continue;
                 }
-                if (CheckDistance(lines, newloca))
+                if (CheckCollision(lines, element.GetSolidsInstance().FirstOrDefault()))
                 {
                     tempEle.Add(element);
                 }
             }
 
-            foreach (var element in elements)
+            foreach (var element in tempEle)
             {
                 Solid solid = element.GetSolidsInstance().FirstOrDefault();
+                Solid Shape = null;
+                bool checkDelete = false;
+                foreach (var line in lines)
+                {
+                    if (solid.IntersectWithCurve(line, new SolidCurveIntersectionOptions()).SegmentCount == 1)
+                    {
+                        checkDelete = true;
+                        Plane plane = CreatePlaneFromLine(line);
+                        Shape = BooleanOperationsUtils.CutWithHalfSpace(solid, MirrorPlane(plane));
+                        if (Shape == null) continue;
+                        solid = Shape;
+                    }
+            catch
+            {
+                return Result.Cancelled;
+                }
+                if(Shape != null)
+                {
+                    DirectShape ds = DirectShape.CreateElement(Document, new ElementId(BuiltInCategory.OST_GenericModel));
+                    ds.ApplicationId = "Application id";
+                    ds.ApplicationDataId = "Geometry object id";
+                    ds.SetShape(new GeometryObject[] { Shape });
+                }
+                if (checkDelete)
+                {
+                    Document.Delete(element.Id);
+                    checkDelete = false;
+                }
 
-
-
+            return Result.Succeeded;
             }
             tran.Commit();
         }
-        bool CheckDistance(List<Line> lines, XYZ point)
+        bool CheckCollision(List<Line> lines, Solid solid)
         {
             foreach (var line in lines)
             {
-                if (line.Distance(point) <= kc)
+                if (solid.IntersectWithCurve(line, new SolidCurveIntersectionOptions()).SegmentCount == 1)
                     return true;
             }
             return false;
         }
-    }
-    [Transaction(TransactionMode.Manual)]
-    public class SplitRegionsWithLine : IExternalCommand
-    {
-        public Result Execute(
-            ExternalCommandData commandData,
-            ref string message,
-            ElementSet elements)
+        Plane CreatePlaneFromLine(Line line)
         {
-            UIDocument uidoc = commandData.Application.ActiveUIDocument;
-            Document doc = uidoc.Document;
-            Selection selection = uidoc.Selection;
-
-            // Helper functions
-            Func<Plane, Plane> mirrorPlane = (Plane plane) =>
-            {
-                XYZ origin = plane.Origin;
-                XYZ normal = plane.Normal;
-                XYZ mirroredNormal = new XYZ(-normal.X, -normal.Y, -normal.Z);
-                return Plane.CreateByNormalAndOrigin(mirroredNormal, origin);
-            };
-
-            Func<Solid, Face> findTopFace = (Solid solid) =>
-            {
-                foreach (PlanarFace face in solid.Faces)
-                {
-                    if (face.FaceNormal.IsAlmostEqualTo(XYZ.BasisZ))
-                    {
-                        return face;
-                    }
-                }
-                return null;
-            };
-
-            Func<DetailLine, Plane> createPlaneFromLine = (DetailLine line) =>
-            {
-                XYZ startPoint = line.GeometryCurve.GetEndPoint(0);
-                XYZ endPoint = line.GeometryCurve.GetEndPoint(1);
-                XYZ midPoint = (startPoint + endPoint) / 2;
-                XYZ midPointWithOffset = new XYZ(midPoint.X, midPoint.Y, midPoint.Z + 10);
-                return Plane.CreateByThreePoints(startPoint, endPoint, midPointWithOffset);
-            };
-
-            // Select Filled Regions
-            List<ElementId> selectedRegionIds = new List<ElementId>();
-            try
-            {
-                ISelectionFilter regionFilter = new ISelectionFilter_Regions();
-                IList<Reference> regionReferences = selection.PickObjects(ObjectType.Element, regionFilter);
-                selectedRegionIds = regionReferences.Select(refElem => refElem.ElementId).ToList();
-
-                if (selectedRegionIds.Count == 0)
-                {
-                    TaskDialog.Show("Error", "FilledRegions weren't selected. Please Try Again.");
-                    return Result.Cancelled;
-                }
-            }
-            catch
-            {
-                return Result.Cancelled;
-            }
-
-            // Select DetailLine
-            ElementId selectedLineId = ElementId.InvalidElementId;
-            try
-            {
-                ISelectionFilter detailLineFilter = new ISelectionFilter_DetailLine();
-                Reference lineReference = selection.PickObject(ObjectType.Element, detailLineFilter);
-                selectedLineId = lineReference.ElementId;
-
-                if (selectedLineId == ElementId.InvalidElementId)
-                {
-                    TaskDialog.Show("Error", "Detail Line wasn't selected. Please Try Again.");
-                    return Result.Cancelled;
-                }
-            }
-            catch
-            {
-                return Result.Cancelled;
-            }
-
-            // Create Plane from DetailLine
-            Element selectedLine = doc.GetElement(selectedLineId);
-            DetailLine detailLine = selectedLine as DetailLine;
-            Plane plane = createPlaneFromLine(detailLine);
-
-            // Modify Shape
-            using (Transaction t = new Transaction(doc, "Split Regions with Line"))
-            {
-                t.Start();
-
-                foreach (ElementId regionId in selectedRegionIds)
-                {
-                    try
-                    {
-                        FilledRegion region = doc.GetElement(regionId) as FilledRegion;
-
-                        // Create Shape from Boundaries (random height)
-                        List<CurveLoop> boundaries = (List<CurveLoop>)region.GetBoundaries();
-                        Solid shape = GeometryCreationUtilities.CreateExtrusionGeometry(boundaries, XYZ.BasisZ, 10);
-
-                        // Split Solid with Plane (In both directions)
-                        Solid newShape1 = BooleanOperationsUtils.CutWithHalfSpace(shape, plane);
-                        Solid newShape2 = BooleanOperationsUtils.CutWithHalfSpace(shape, mirrorPlane(plane));
-
-                        // Get Top Faces of new Geometries
-                        Face topFace1 = findTopFace(newShape1);
-                        Face topFace2 = findTopFace(newShape2);
-
-                        // Get Top Face Outlines
-                        List<CurveLoop> outline1 = (List<CurveLoop>)topFace1.GetEdgesAsCurveLoops();
-                        List<CurveLoop> outline2 = (List<CurveLoop>)topFace2.GetEdgesAsCurveLoops();
-
-                        // Get Filled Region Type
-                        ElementId frId = region.GetTypeId();
-
-                        // Create new FilledRegions
-                        FilledRegion filledRegion1 = FilledRegion.Create(doc, frId, doc.ActiveView.Id, outline1);
-                        FilledRegion filledRegion2 = FilledRegion.Create(doc, frId, doc.ActiveView.Id, outline2);
-
-                        // Delete Old Filled Region
-                        if (filledRegion1 != null && filledRegion2 != null)
-                        {
-                            doc.Delete(region.Id);
-                        }
-                    }
-                    catch
-                    {
-                        continue;
-                    }
-                }
-
-                t.Commit();
-            }
-
-            return Result.Succeeded;
+            XYZ startPoint = line.GetEndPoint(0);
+            XYZ endPoint = line.GetEndPoint(1);
+            XYZ midPoint = (startPoint + endPoint) / 2;
+            XYZ midPointWithOffset = new XYZ(midPoint.X, midPoint.Y, midPoint.Z + 10);
+            return Plane.CreateByThreePoints(startPoint, endPoint, midPointWithOffset);
         }
-    }
-
-    // Define Selection Filters
-    public class ISelectionFilter_Regions : ISelectionFilter
-    {
-        public bool AllowElement(Element element)
+        Plane MirrorPlane(Plane plane)
         {
-            return (element is FilledRegion);
-        }
-
-        public bool AllowReference(Reference refer, XYZ point)
-        {
-            return true;
-        }
-    }
-
-    public class ISelectionFilter_DetailLine : ISelectionFilter
-    {
-        public bool AllowElement(Element element)
-        {
-            return (element is DetailLine);
-        }
-
-        public bool AllowReference(Reference refer, XYZ point)
-        {
-            return true;
+            XYZ origin = plane.Origin;
+            XYZ normal = plane.Normal;
+            XYZ mirroredNormal = new XYZ(-normal.X, -normal.Y, -normal.Z);
+            return Plane.CreateByNormalAndOrigin(mirroredNormal, origin);
         }
     }
 
