@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using Autodesk.Revit.DB;
+using System.Diagnostics;
+using System.Windows;
 
 namespace BimIshou
 {
@@ -12,9 +14,12 @@ namespace BimIshou
             InitializeComponent();
         }
 
-        private void lstv_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void ListView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-
+            var viewmodel = (Export2Excel)DataContext;
+            viewmodel.SelectedItems = listview.SelectedItems
+                .Cast<ViewSchedule>()
+                .ToList();
         }
     }
 }

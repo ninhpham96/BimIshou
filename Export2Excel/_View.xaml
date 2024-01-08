@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
@@ -10,31 +11,22 @@
         x:Name="window"
         Title="Export to Excel" 
         Height="300" Width="300">
-    <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ui:ThemeResources />
-                <ui:XamlControlsResources />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="200"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <ui:ListView Grid.Row="0"
+        <ListView Grid.Row="0" x:Name="listview"
+                     SelectionChanged="ListView_SelectionChanged"
                      DisplayMemberPath="Name" SelectionMode="Multiple"
-                     ItemsSource="{Binding _source}"
-                     SelectedItem="{Binding Selected}"/>
-        <DockPanel Grid.Row="1" LastChildFill="False" HorizontalAlignment="Right">
-            <Button  Content="Ok" Height="30" Width="70" 
-                     Background="#FFEDD4B5"
+                     ItemsSource="{Binding _source}">
+        </ListView>
+        <DockPanel Margin="5" Grid.Row="1" LastChildFill="False" HorizontalAlignment="Right">
+            <Button  Content="Ok" Height="30" Width="70"
                     Command="{Binding OkCommand}"
                     CommandParameter="{Binding ElementName=window}"/>
-            <Button Margin=" 5 0 5 0" Content="Cancel" Height="30" Width="70" 
-                    Command="{Binding CancelCommand}"
-                     Background="#FFEDD4B5"                    
+            <Button Margin=" 5 0 5 0" Content="Cancel" Height="30" Width="70"
+                    Command="{Binding CancelCommand}"               
                     CommandParameter="{Binding ElementName=window}"/>
         </DockPanel>
     </Grid>
