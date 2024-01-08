@@ -56,11 +56,11 @@ public abstract class ApplicationBase : IExternalApplication
 
     private Assembly ResolveAssemblyOnStartup(object sender, ResolveEventArgs args)
     {
-        return ResolveHelper.ResolveAssembly(sender,args);
+        return null;
     }
 
     private Assembly ResolveAssemblyOnShutdown(object sender, ResolveEventArgs args)
     {
-        return ResolveHelper.ResolveAssembly(sender,args);
+        return null;
     }
 }
