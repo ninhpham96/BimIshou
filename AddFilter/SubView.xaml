@@ -1,0 +1,21 @@
+﻿<Window x:Class="BimIshou.AddFilter.SubView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BimIshou.AddFilter"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Title="SubView" Height="130" Width="300">
+    <Grid>
+        <StackPanel>
+            <Label Content="Chọn View Templates để lấy Filter"/>
+            <ComboBox Margin="5 0 5 0" x:Name="cbViewSource" ItemsSource="{Binding Viewtemplates, Mode=TwoWay}" SelectedItem="{Binding viewSelected}"
+                      DisplayMemberPath="Name"/>
+            <DockPanel LastChildFill="False" HorizontalAlignment="Right" Margin="5">
+                <Button Width="50" Content="Ok" Margin=" 5" Command="{Binding OkSubCommand}"/>
+                <Button Width="50" Content="Cancel" Margin=" 5"/>
+            </DockPanel>
+        </StackPanel>
+    </Grid>
+</Window>

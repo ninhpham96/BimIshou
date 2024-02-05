@@ -1,12 +1,8 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Architecture;
-using Autodesk.Revit.UI;
-using Autodesk.Revit.UI.Selection;
 using BimIshou.Utils;
-using MathNet.Numerics;
 using Nice3point.Revit.Toolkit.External;
-using System.Diagnostics;
 
 namespace BimIshou.Commands
 {
@@ -16,15 +12,14 @@ namespace BimIshou.Commands
         List<Element> elements = new();
         List<Element> tempEle = new();
         List<Line> lines = new();
-        double kc = 215 / 304.8;
         double Max = int.MinValue;
         public override void Execute()
         {
             double delta = (300 + 2) / 304.8;
-            Room room = Document.GetElement(new ElementId(2805)) as Room;
+            Room room = Document.GetElement(new ElementId(3096)) as Room;
             var option = new SpatialElementBoundaryOptions();
             var bound = room.GetBoundarySegments(option);
-            FamilyInstance viendinhvi = Document.GetElement(new ElementId(3703)) as FamilyInstance;
+            FamilyInstance viendinhvi = Document.GetElement(new ElementId(8828)) as FamilyInstance;
             XYZ loca = (viendinhvi.Location as LocationPoint).Point;
 
             foreach (var Segments in bound)
@@ -90,11 +85,8 @@ namespace BimIshou.Commands
                         if (Shape == null) continue;
                         solid = Shape;
                     }
-            catch
-            {
-                return Result.Cancelled;
                 }
-                if(Shape != null)
+                if (Shape != null)
                 {
                     DirectShape ds = DirectShape.CreateElement(Document, new ElementId(BuiltInCategory.OST_GenericModel));
                     ds.ApplicationId = "Application id";
@@ -106,8 +98,6 @@ namespace BimIshou.Commands
                     Document.Delete(element.Id);
                     checkDelete = false;
                 }
-
-            return Result.Succeeded;
             }
             tran.Commit();
         }
@@ -136,5 +126,4 @@ namespace BimIshou.Commands
             return Plane.CreateByNormalAndOrigin(mirroredNormal, origin);
         }
     }
-
 }
