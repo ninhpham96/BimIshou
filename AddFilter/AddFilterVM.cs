@@ -23,7 +23,7 @@ public partial class AddFilterVM : ObservableObject
         Viewtemplates = GetViewTemplates();
         MainView = mainView;
         SubView = subView;
-        subView.cbViewSource.SelectedItem = Viewtemplates.FirstOrDefault();
+        viewSelected = Viewtemplates.FirstOrDefault(v => v.Name == "00.VIEWTEMPLATE(ORIGIN)");
         SubView.DataContext = this;
         MainView.DataContext = this;
     }
@@ -41,6 +41,12 @@ public partial class AddFilterVM : ObservableObject
             .OfClass(typeof(View))
             .Cast<View>()
             .Where(v => v.IsTemplate)
+            .Where(v=>v.ViewType == ViewType.ThreeD 
+            || v.ViewType == ViewType.FloorPlan
+            || v.ViewType == ViewType.Walkthrough
+            || v.ViewType == ViewType.AreaPlan
+            || v.ViewType == ViewType.CeilingPlan
+            || v.ViewType == ViewType.Section)
             .ToList();
     }
     private List<Element> GetFilter(View view)
@@ -53,16 +59,44 @@ public partial class AddFilterVM : ObservableObject
         }
         return result;
     }
-
     [RelayCommand]
     private void OkSub()
     {
-        if(viewSelected is null)
+        if (viewSelected is null)
         {
             MessageBox.Show("bạn chưa chọn view nào!");
             return;
         }
         ViewFilters = GetFilter(viewSelected as View);
         SubView.DialogResult = true;
+    }
+    [RelayCommand]
+    private void CancelSub()
+    {
+        SubView.DialogResult = false;
+    }
+    [RelayCommand]
+    private void OkMain()
+    {
+        var views = MainView.lsvViewtemplate.SelectedItems;
+        using (Transaction tran = new Transaction(Doc, "Add"))
+        {
+            tran.Start();
+            foreach (View view in views)
+            {
+                foreach (var filter in ViewFilters)
+                {
+                    view.AddFilter(filter.Id);
+                }
+            }
+            tran.Commit();
+        }
+
+        MainView.DialogResult = true;
+    }
+    [RelayCommand]
+    private void CancelMain()
+    {
+        MainView.DialogResult = false;
     }
 }

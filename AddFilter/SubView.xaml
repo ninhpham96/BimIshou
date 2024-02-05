@@ -10,11 +10,13 @@
     <Grid>
         <StackPanel>
             <Label Content="Chọn View Templates để lấy Filter"/>
-            <ComboBox Margin="5 0 5 0" x:Name="cbViewSource" ItemsSource="{Binding Viewtemplates, Mode=TwoWay}" SelectedItem="{Binding viewSelected}"
+            <ComboBox Margin="5 0 5 0" x:Name="cbViewSource" 
+                      ItemsSource="{Binding Viewtemplates, Mode=TwoWay}"
+                      SelectedItem="{Binding viewSelected}"
                       DisplayMemberPath="Name"/>
             <DockPanel LastChildFill="False" HorizontalAlignment="Right" Margin="5">
                 <Button Width="50" Content="Ok" Margin=" 5" Command="{Binding OkSubCommand}"/>
-                <Button Width="50" Content="Cancel" Margin=" 5"/>
+                <Button Width="50" Content="Cancel" Command="{Binding CancelSubCommand}" Margin=" 5"/>
             </DockPanel>
         </StackPanel>
     </Grid>

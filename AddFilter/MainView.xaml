@@ -7,15 +7,28 @@
         mc:Ignorable="d"
         Title="MainView" Height="450" Width="800">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <ListView Grid.Column="0" x:Name="lsvViewtemplate" 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="9*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <ListView Grid.Column="0" x:Name="lsvViewtemplate" 
                   ItemsSource="{Binding Viewtemplates, Mode=TwoWay}"
+                  SelectionMode="Extended"
                   DisplayMemberPath="Name" />
-        <ListView Grid.Column="1" x:Name="lsvFilter" 
+            <ListView Grid.Column="1" x:Name="lsvFilter" 
                   ItemsSource="{Binding ViewFilters, Mode=TwoWay}"
                   DisplayMemberPath="Name" />
+        </Grid>
+        <Grid Grid.Row="1">
+            <DockPanel LastChildFill="False" HorizontalAlignment="Right" Margin="5">
+                <Button Width="50" Content="Ok" Margin=" 5" Command="{Binding OkMainCommand}"/>
+                <Button Width="50" Content="Cancel" Command="{Binding CancelMainCommand}" Margin=" 5"/>
+            </DockPanel>
+        </Grid>
     </Grid>
 </Window>
