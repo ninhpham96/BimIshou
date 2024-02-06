@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BimIshou
 {
-    internal static class Hosting
+    public static class Hosting
     {
         private static ServiceProvider? _serviceProvider;
         public static void StartHosting(UIApplication uiapp)

@@ -64,16 +64,13 @@
         <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
         <PackageReference Include="ModernWpfUI" Version="0.9.6" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
+        <PackageReference Include="ricaun.Revit.DI" Version="1.0.0" />
     </ItemGroup>
 
     <ItemGroup>
         <Using Include="Nice3point.Revit.Extensions" />
         <Using Include="Nice3point.Revit.Toolkit.Utils" />
         <Using Include="JetBrains.Annotations" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="ViewModels\Objects" />
     </ItemGroup>
 
     <ItemGroup>

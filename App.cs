@@ -1,17 +1,22 @@
 ﻿using BimIshou.Commands;
 using BimIshou.Commands.ChieucaoTB;
-using BimIshou.TestAtt;
 using BimIshou.DuplicateSheet;
 using BimIshou.Commands.A14;
+using Nice3point.Revit.Toolkit.External;
+using Autodesk.Revit.UI;
+using ricaun.Revit.DI;
+using Autodesk.Revit.ApplicationServices;
 
 namespace BimIshou
 {
     [UsedImplicitly]
-    public class Application : ApplicationBase
+    public class App : ExternalApplication, IHost
     {
         public override void OnStartup()
         {
             CreateRibbon();
+            //var container = this.GetContainer();
+            //container.AddRevitSingleton(Application);
         }
         private void CreateRibbon()
         {
