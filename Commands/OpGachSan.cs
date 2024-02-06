@@ -16,10 +16,10 @@ namespace BimIshou.Commands
         public override void Execute()
         {
             double delta = (300 + 2) / 304.8;
-            Room room = Document.GetElement(new ElementId(2805)) as Room;
+            Room room = Document.GetElement(new ElementId(3096)) as Room;
             var option = new SpatialElementBoundaryOptions();
             var bound = room.GetBoundarySegments(option);
-            FamilyInstance viendinhvi = Document.GetElement(new ElementId(3703)) as FamilyInstance;
+            FamilyInstance viendinhvi = Document.GetElement(new ElementId(8828)) as FamilyInstance;
             XYZ loca = (viendinhvi.Location as LocationPoint).Point;
 
             foreach (var Segments in bound)
@@ -86,7 +86,7 @@ namespace BimIshou.Commands
                         solid = Shape;
                     }
                 }
-                if(Shape != null)
+                if (Shape != null)
                 {
                     DirectShape ds = DirectShape.CreateElement(Document, new ElementId(BuiltInCategory.OST_GenericModel));
                     ds.ApplicationId = "Application id";

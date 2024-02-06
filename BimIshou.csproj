@@ -65,6 +65,7 @@
         <PackageReference Include="ModernWpfUI" Version="0.9.6" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
         <PackageReference Include="ricaun.Revit.DI" Version="1.0.0" />
+        <PackageReference Include="WPFDevelopers" Version="1.1.0.2-preview5" />
     </ItemGroup>
 
     <ItemGroup>
